@@ -1,5 +1,24 @@
-# Open WebUI + Ollama — Production-Ready systemd Stack
+# Open WebUI + Ollama systemd Stack
 
+> Production-ready local AI infrastructure with systemd service management, Docker bridge networking, and desktop integration.
+
+## Why I Built This
+
+I wanted to run Open WebUI + Ollama on my laptop without constantly draining the battery. Most guides just say "docker run" and leave you with a container running 24/7.
+
+After a weekend of figuring out Docker bridge networking (that `172.17.0.1` gateway IP took me 2 hours to debug!), systemd user services, and battery optimization, I decided to document everything properly.
+
+**This is what I use daily on my HP EliteBook 845 G8 running Ubuntu 24.04.**
+
+Key learnings:
+- systemd `Type=oneshot` with `RemainAfterExit=yes` is perfect for docker compose
+- Docker bridge networking requires `OLLAMA_HOST=0.0.0.0` (not `127.0.0.1`)
+- Manual lifecycle control saves 20-30% battery vs auto-start
+- XDG desktop integration works great with systemd user services
+
+---
+
+## Overview
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%2B-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com)
 
@@ -894,6 +913,53 @@ This project builds on excellent work from the open-source community:
 
 ---
 
-**Built with 🤖 in Germany • Privacy-first • GDPR-compliant • Energy-conscious**
+## Roadmap
 
-**Enjoy local AI without compromising your data! 🚀**
+### Planned Features
+- [ ] Prometheus monitoring for container metrics
+- [ ] GitHub Actions CI/CD pipeline
+- [ ] Ansible playbook for automated deployment
+- [ ] Multi-distribution support (Fedora, Arch)
+- [ ] Resource limits and quotas
+
+### Completed
+- [x] systemd user service integration
+- [x] Docker bridge networking setup
+- [x] Desktop launchers (XDG standards)
+- [x] Comprehensive documentation
+- [x] Battery-optimized manual control
+
+Want to contribute? Open an issue or PR!
+
+---
+
+## My Setup
+
+**Hardware:** HP EliteBook 845 G8  
+**OS:** Ubuntu 24.04 LTS  
+**Docker:** 24.0+  
+**Use case:** Daily driver for development + local AI experiments
+
+### Models I Use
+
+| Model | Size | Purpose |
+|-------|------|---------|
+| `mistral` | ~4.1 GB | Universal workhorse - general tasks + coding |
+| `qwen3:14b` | ~9 GB | Heavy lifting - best reasoning for complex problems |
+| `gemma3:3b` | ~2 GB | Quick responses for simple questions |
+| `codellama:7b` | ~3.8 GB | Code-specific tasks (refactoring, debugging) |
+
+**Model selection strategy:**
+- Start with `gemma3:3b` for quick questions (saves battery)
+- Switch to `mistral` for coding + general work
+- Use `qwen3:14b` when I need best quality (slower, but worth it)
+- `codellama:7b` for dedicated code review sessions
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file.
+
+**Built with:** 🐳 Docker • ⚙️ systemd • 🐧 Linux • 🤖 Ollama
+
