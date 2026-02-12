@@ -2,6 +2,30 @@
 
 **Open WebUI + Ollama systemd Stack**
 
+> **Note:** This document grew as I figured things out. Some decisions were made after trial and error - I'll note those below.
+
+## Learning Journey
+
+**What worked immediately:**
+- Docker Compose basics
+- systemd service definition
+
+**What took debugging:**
+- Bridge networking (`172.17.0.1` gateway IP - spent 2 hours on this!)
+- `OLLAMA_HOST=0.0.0.0` requirement (default `127.0.0.1` didn't work)
+- `Type=oneshot` + `RemainAfterExit=yes` combo for docker compose
+
+**What I'd do differently next time:**
+- Start with host networking, then migrate to bridge (would've been faster to prototype)
+- Test with smaller models first (gemma3:3b) before pulling qwen3:14b
+
+---
+
+This document explains the technical architecture, design decisions, and system integration patterns used in this project.
+
+
+**Open WebUI + Ollama systemd Stack**
+
 This document explains the technical architecture, design decisions, and system integration patterns used in this project.
 
 ---
@@ -720,6 +744,39 @@ volumes:
 - **Horizontal:** Multiple Open WebUI instances for load balancing
 - **Vertical:** GPU passthrough for faster inference
 - **Federation:** Shared Ollama backend for multiple users
+
+---
+
+## Lessons Learned
+
+### Debugging Bridge Networking
+Initially tried `OLLAMA_BASE_URL=http://localhost:11434` in container - didn't work.  
+Learned that containers can't access host's `localhost` directly.  
+**Solution:** Use Docker bridge gateway IP `172.17.0.1`.
+
+Spent 2 hours checking:
+- Firewall rules (wasn't the issue)
+- Ollama service status (was running fine)
+- Container logs (showed connection refused)
+
+Finally found the answer in Docker networking docs - gateway IP is the key.
+
+### systemd Service Type
+First tried `Type=simple` - service stayed in "activating" state forever.  
+Realized docker compose exits after starting containers (doesn't stay running).  
+**Solution:** `Type=oneshot` with `RemainAfterExit=yes`.
+
+### Battery Optimization Discovery
+Initially had `restart: unless-stopped` in docker-compose.yml.  
+Noticed laptop battery drained 30% overnight even when not using AI.  
+**Investigation:** Container was idle but consuming ~200MB RAM constantly.  
+**Solution:** Changed to `restart: "no"` and manual control.  
+**Result:** 20-30% daily battery savings. Worth the manual startup!
+
+### Port Selection
+Chose port 3000 after port 8080 conflicted with my local dev server.  
+Considered 8000, but that's often used for Python apps.  
+3000 is commonly used for Node.js dev servers, feels natural.
 
 ---
 
