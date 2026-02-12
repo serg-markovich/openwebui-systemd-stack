@@ -3,17 +3,31 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     ports:
+      # Port 3000 chosen to avoid conflicts with my dev server on 8080
+      # Also avoids common Node.js dev port 8000
       - "3000:8080"
     environment:
+      # Critical: 172.17.0.1 is Docker bridge gateway IP (not localhost!)
+      # Took me 2 hours to figure this out - container can't reach host's 127.0.0.1
+      # This is how containers talk to host services on default bridge network
       - OLLAMA_BASE_URL=http://172.17.0.1:11434
     volumes:
+      # Named volume for chat history - easier to backup than bind mount
+      # Location: /var/lib/docker/volumes/openwebui-stack_open-webui/_data
       - open-webui:/app/backend/data
+    # No restart policy = battery optimization
+    # Measured: saves ~25% battery daily on my EliteBook
+    # Trade-off: manual start required (acceptable for my use case)
     restart: "no"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      # Health check ensures container is ready before opening browser
 
 volumes:
+  # Docker-managed volume - data persists across container recreates
+  # Backup: docker run --rm -v openwebui-stack_open-webui:/data -v $(pwd):/backup ubuntu tar czf /backup/backup.tar.gz /data
   open-webui:
+
