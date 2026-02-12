@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Open WebUI (Status)
+Comment=Check Open WebUI status
+Exec=gnome-terminal -- bash -c "/home/sergey/openwebui-stack/scripts/status.sh; read -p 'Press Enter to close'"
+Icon=utilities-system-monitor
+Terminal=true
+Categories=Development;System;

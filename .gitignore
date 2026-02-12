@@ -1,0 +1,19 @@
+# Docker runtime
+*.log
+.env
+.env.local
+
+# System files
+.DS_Store
+Thumbs.db
+*~
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*.backup
+*.bak

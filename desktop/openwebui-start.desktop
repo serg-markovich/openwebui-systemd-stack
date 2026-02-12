@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Open WebUI
+Comment=Local AI Chat Interface with Ollama
+Exec=/home/sergey/openwebui-stack/scripts/start-with-browser.sh
+Icon=ai-symbolic
+Terminal=false
+Categories=Development;Network;AI;
+Keywords=ai;llm;ollama;chat;
+StartupNotify=true
