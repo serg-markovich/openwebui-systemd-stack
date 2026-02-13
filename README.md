@@ -1,4 +1,4 @@
-# Open WebUI + Ollama systemd Stack
+=# Open WebUI + Ollama systemd Stack
 
 <div align="center">
 
@@ -20,13 +20,13 @@
 
 <div align="center">
 
-### Desktop Launcher Integration
+### Open WebUI in browser (chat view)
 <img src="docs/screenshot_1.png" alt="Desktop Launcher" width="600"/>
 
-### Open WebUI Interface
+### Model selection and prompt input
 <img src="docs/screenshot_2.png" alt="Chat Interface" width="600"/>
 
-### systemd Service Status
+### Open WebUI launchers in application menu
 <img src="docs/screenshot_3.png" alt="Service Status" width="600"/>
 
 </div>
