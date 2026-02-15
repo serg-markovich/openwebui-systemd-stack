@@ -3,7 +3,7 @@ name: Check Open WebUI Updates
 on:
   schedule:
     - cron: '0 9 * * 1'  # Every Monday at 09:00 UTC
-  workflow_dispatch:      # Manual trigger button
+  workflow_dispatch:      # Manual trigger
 
 permissions:
   contents: read
@@ -29,7 +29,7 @@ jobs:
           echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
 
       - name: Create Issue if update available
-        if: steps.latest.outputs.tag != steps.current.outputs.tag
+        if: steps.latest.outputs.tag != steps.current.outputs.tag && steps.current.outputs.tag != 'main'
         uses: actions/github-script@v7
         with:
           script: |
@@ -45,8 +45,8 @@ jobs:
             if (!exists) {
               await github.rest.issues.create({
                 owner, repo,
-                title: `🚀 Update available: ${latest}`,
-                body: `New version detected!\n\n- **Current**: \`${current}\`\n- **Latest**: \`${latest}\`\n\n[Changelog](https://github.com/open-webui/open-webui/releases/tag/${latest})\n\nSee **docs/UPDATING.md** to apply.`,
-                labels: ['maintenance']
+                title: `🚀 Open WebUI ${latest} available`,
+                body: `New version detected!\n\n**Current**: \`${current}\`\n**Latest**: \`${latest}\`\n\n📋 [Changelog](https://github.com/open-webui/open-webui/releases/tag/${latest})\n\n### To update:\n\n\`\`\`bash\n./scripts/update.sh\n\`\`\`\n\nOr see [docs/UPDATING.md](docs/UPDATING.md) for manual steps.`,
+                labels: ['dependencies', 'enhancement']
               });
             }
