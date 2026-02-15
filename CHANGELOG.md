@@ -43,3 +43,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated documentation with personal context and origin story
 - Added actual hardware specs and model usage patterns
 - Documented debugging journey (bridge networking issues)
+
+## [1.1.0] - 2026-02-15
+
+### Added
+- Automated update script (`scripts/update.sh`) with network retry logic
+- GitHub Actions workflow for monitoring Open WebUI releases
+- Automatic Issue creation when new versions are available
+- systemd integration in update script for proper lifecycle management
+- Comprehensive update documentation (docs/UPDATING.md)
+- Post-update verification checklist
+
+### Changed
+- Consolidated network troubleshooting into single TROUBLESHOOTING.md
+- Improved documentation structure and cross-references
+
+### Technical
+- Update script uses systemd for service control instead of direct docker compose
+- Retry logic handles flaky network connections during image pulls
+- Weekly automated checks via GitHub Actions (every Monday 09:00 UTC)
