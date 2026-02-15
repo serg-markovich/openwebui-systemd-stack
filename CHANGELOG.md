@@ -4,13 +4,32 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
 
-### Planned
-- Prometheus monitoring integration
-- GitHub Actions CI/CD pipeline
-- Ansible playbook for deployment automation
-- Multi-distribution support (Fedora, Arch)
+## [1.1.0] - 2026-02-15
+
+### Added
+- Automated update script (`scripts/update.sh`) with network retry logic
+- GitHub Actions workflow for monitoring Open WebUI releases
+- Automatic Issue creation when new versions are available
+- systemd integration in update script for proper lifecycle management
+- Comprehensive update documentation (docs/UPDATING.md)
+- Post-update verification checklist
+
+### Changed
+- Consolidated network troubleshooting into single TROUBLESHOOTING.md
+- Improved documentation structure and cross-references
+
+### Technical
+- Update script uses systemd for service control instead of direct docker compose
+- Retry logic handles flaky network connections during image pulls
+- Weekly automated checks via GitHub Actions (every Monday 09:00 UTC)
+
+## [1.0.1] - 2026-02-12
+
+### Changed
+- Updated documentation with personal context and origin story
+- Added actual hardware specs and model usage patterns
+- Documented debugging journey (bridge networking issues)
 
 ## [1.0.0] - 2026-02-09
 
@@ -36,29 +55,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Only tested on Ubuntu 24.04 (should work on other distros)
 - Port 3000 might conflict with other services
 - Requires Docker group membership (security consideration)
-
-## [1.0.1] - 2026-02-12
-
-### Changed
-- Updated documentation with personal context and origin story
-- Added actual hardware specs and model usage patterns
-- Documented debugging journey (bridge networking issues)
-
-## [1.1.0] - 2026-02-15
-
-### Added
-- Automated update script (`scripts/update.sh`) with network retry logic
-- GitHub Actions workflow for monitoring Open WebUI releases
-- Automatic Issue creation when new versions are available
-- systemd integration in update script for proper lifecycle management
-- Comprehensive update documentation (docs/UPDATING.md)
-- Post-update verification checklist
-
-### Changed
-- Consolidated network troubleshooting into single TROUBLESHOOTING.md
-- Improved documentation structure and cross-references
-
-### Technical
-- Update script uses systemd for service control instead of direct docker compose
-- Retry logic handles flaky network connections during image pulls
-- Weekly automated checks via GitHub Actions (every Monday 09:00 UTC)
