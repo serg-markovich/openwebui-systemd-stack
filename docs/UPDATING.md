@@ -40,3 +40,23 @@ When a new version is released (or an Issue is created):
 
 5.  **Cleanup:**
     Close the automated Issue regarding the update.
+## 🔧 Troubleshooting
+
+### Network Issues (Connection Reset / Timeout)
+If you encounter `read: connection reset by peer` or timeouts during `docker compose pull`, especially with large images (>1GB):
+
+1.  **Use the update script:** The `./update.sh` script includes a retry loop and increased timeouts automatically.
+2.  **Force IPv4 (Temporary):**
+    If IPv6 routing is unstable, disable it temporarily:
+    ```bash
+    sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+    # run update
+    sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
+    ```
+3.  **Docker Daemon Config:**
+    Limit concurrent downloads to prevent bandwidth saturation. Add to `/etc/docker/daemon.json`:
+    ```json
+    {
+      "max-concurrent-downloads": 1
+    }
+    ```
