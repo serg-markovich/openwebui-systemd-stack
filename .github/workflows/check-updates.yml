@@ -1,0 +1,54 @@
+name: Check Open WebUI Updates
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 09:00 UTC
+  workflow_dispatch:      # Manual trigger button
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get latest release tag
+        id: latest
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/open-webui/open-webui/releases/latest | jq -r .tag_name)
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Get current version
+        id: current
+        run: |
+          # Extracts tag after colon from docker-compose.yml
+          CURRENT_TAG=$(grep 'image:.*open-webui' docker-compose.yml | awk -F: '{print $3}')
+          echo "tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create Issue if update available
+        if: steps.latest.outputs.tag != steps.current.outputs.tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const latest = '${{ steps.latest.outputs.tag }}';
+            const current = '${{ steps.current.outputs.tag }}';
+            
+            // Check for existing open issues to avoid duplicates
+            const issues = await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', creator: 'github-actions[bot]'
+            });
+            const exists = issues.data.find(i => i.title.includes(latest));
+            
+            if (!exists) {
+              await github.rest.issues.create({
+                owner, repo,
+                title: `🚀 Update available: ${latest}`,
+                body: `New version detected!\n\n- **Current**: \`${current}\`\n- **Latest**: \`${latest}\`\n\n[Changelog](https://github.com/open-webui/open-webui/releases/tag/${latest})\n\nSee **docs/UPDATING.md** to apply.`,
+                labels: ['maintenance']
+              });
+            }
