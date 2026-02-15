@@ -549,6 +549,46 @@ systemctl --version >> system-info.txt
 
 ---
 
+## Problem: Docker Pull Issues (Connection Reset / Timeouts)
+
+**Symptom:**
+- `docker compose pull` fails with `read: connection reset by peer`.
+- Download freezes at 0% or stays at the same GB for a long time.
+- Connection timeouts when downloading large images (>1GB).
+
+**Solution 1: Use the maintenance script (Recommended)**
+The provided update script includes a retry loop and increased timeouts to handle unstable connections.
+
+```
+./scripts/update.sh
+```
+
+**Solution 2: Limit Concurrent Downloads**
+Prevent Docker from saturating your bandwidth, which often causes the reset. Create or edit /etc/docker/daemon.json:
+
+```
+{
+  "max-concurrent-downloads": 1
+}
+```
+
+Then restart Docker: 
+
+```
+sudo systemctl restart docker.
+```
+
+**Solution 3: Temporary IPv4 Force**
+If your IPv6 routing is unstable (common with some ISPs), disable it during the pull:
+
+```
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+./scripts/update.sh
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=0
+```
+
+---
+
 ## Performance Tuning
 
 ### Reduce memory usage
