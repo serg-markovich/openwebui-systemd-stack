@@ -5,31 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
+## [1.2.0] - 2026-02-16
+
+### Fixed
+- Universal paths in systemd service using %h variable
+- Removed hardcoded absolute paths from all components
+- Fixed start-with-browser.sh to work from any project location
+- Desktop launchers now use portable paths
+
+### Changed
+- systemd service simplified: removed docker.service dependency
+- Increased startup wait time from 8s to 25s for proper health check
+- update.sh script now auto-detects project root
+- Desktop launchers use inline bash commands
+
+### Technical
+- WorkingDirectory=%h/openwebui-stack for portability
+- Scripts use auto-detection for project root
+- All executable permissions set via chmod +x
+
+### Documentation
+- Added notes about custom installation paths
+
+
 ## [1.1.0] - 2026-02-15
 
 ### Added
-- Automated update script (`scripts/update.sh`) with network retry logic
-- GitHub Actions workflow for monitoring Open WebUI releases
-- Automatic Issue creation when new versions are available
-- systemd integration in update script for proper lifecycle management
-- Comprehensive update documentation (docs/UPDATING.md)
-- Post-update verification checklist
+- Automated update script with network retry logic
+- GitHub Actions workflow for monitoring releases
+- systemd integration in update script
+- Comprehensive update documentation
 
 ### Changed
-- Consolidated network troubleshooting into single TROUBLESHOOTING.md
-- Improved documentation structure and cross-references
+- Consolidated network troubleshooting
+- Improved documentation structure
 
-### Technical
-- Update script uses systemd for service control instead of direct docker compose
-- Retry logic handles flaky network connections during image pulls
-- Weekly automated checks via GitHub Actions (every Monday 09:00 UTC)
 
 ## [1.0.1] - 2026-02-12
 
 ### Changed
-- Updated documentation with personal context and origin story
-- Added actual hardware specs and model usage patterns
-- Documented debugging journey (bridge networking issues)
+- Updated documentation with personal context
+- Added hardware specs and model usage patterns
+- Documented debugging journey
+
 
 ## [1.0.0] - 2026-02-09
 
@@ -37,21 +55,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Initial release of systemd-managed Open WebUI stack
 - systemd user service for Docker Compose lifecycle
 - Docker bridge networking configuration
-- XDG desktop launchers (start/stop/status)
-- Comprehensive documentation:
-  - README with step-by-step setup
-  - ARCHITECTURE with design decisions and trade-offs
-  - TROUBLESHOOTING guide for common issues
-- Battery optimization via manual lifecycle control
+- XDG desktop launchers
+- Comprehensive documentation
+- Battery optimization via manual control
 - GDPR-compliant local AI setup
 
 ### Design Decisions
-- Chose bridge networking over host mode for better isolation
-- User service instead of system service (no sudo required)
-- Manual control (no restart policy) for battery savings
+- Bridge networking over host mode
+- User service instead of system service
+- Manual control for battery savings
 - Named Docker volume for data persistence
-
-### Known Issues
-- Only tested on Ubuntu 24.04 (should work on other distros)
-- Port 3000 might conflict with other services
-- Requires Docker group membership (security consideration)
