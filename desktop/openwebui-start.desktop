@@ -1,11 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Open WebUI
-Comment=Local AI Chat Interface with Ollama
-Exec=/home/sergey/openwebui-stack/scripts/start-with-browser.sh
-Icon=ai-symbolic
+Name=Open WebUI - Start
+Comment=Start Open WebUI and open in browser
+Exec=bash -c 'systemctl --user start openwebui && sleep 5 && xdg-open http://localhost:3000'
+Icon=applications-internet
 Terminal=false
-Categories=Development;Network;AI;
-Keywords=ai;llm;ollama;chat;
-StartupNotify=true
+Categories=Network;Application;

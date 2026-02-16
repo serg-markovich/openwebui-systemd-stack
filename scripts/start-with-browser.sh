@@ -1,25 +1,21 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Starting Open WebUI..."
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-if ! systemctl is-active --quiet docker; then
-    notify-send "Open WebUI" "Docker not running. Starting..." --icon=dialog-warning
-    sudo systemctl start docker
-    sleep 2
-fi
-
+echo "🚀 Starting Open WebUI..."
 systemctl --user start openwebui
 
-echo "Waiting for service to be ready..."
-for i in {1..30}; do
-    if curl -s http://localhost:3000/health > /dev/null 2>&1; then
-        notify-send "Open WebUI" "Started successfully!" --icon=dialog-information
-        xdg-open http://localhost:3000
-        exit 0
-    fi
-    sleep 1
-done
+echo "⏳ Waiting for service to be ready..."
+sleep 25  # Увеличили время для health check
 
-notify-send "Open WebUI" "Timeout waiting for service" --icon=dialog-error
-exit 1
+if docker ps | grep -q open-webui; then
+    echo "✅ Service started successfully"
+    xdg-open http://localhost:3000
+    echo "🌐 Browser opened to http://localhost:3000"
+else
+    echo "❌ Service failed to start. Check logs:"
+    echo "   systemctl --user status openwebui"
+    echo "   journalctl --user -u openwebui -n 20"
+    exit 1
+fi
