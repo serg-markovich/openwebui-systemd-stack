@@ -1,9 +1,10 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Open WebUI (Status)
-Comment=Check Open WebUI status
-Exec=gnome-terminal -- bash -c "/home/sergey/openwebui-stack/scripts/status.sh; read -p 'Press Enter to close'"
-Icon=utilities-system-monitor
+Name=Open WebUI - Status
+Comment=Check Open WebUI service status
+Exec=bash -c 'systemctl --user status openwebui; docker ps | grep open-webui || echo "Container not running"; read -p "Press Enter to close..."'
+Icon=dialog-information
 Terminal=true
-Categories=Development;System;
+Categories=Network;Application;
+

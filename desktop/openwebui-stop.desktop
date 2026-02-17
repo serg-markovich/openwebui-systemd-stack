@@ -1,9 +1,10 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Open WebUI (Stop)
-Comment=Stop Open WebUI container
-Exec=/home/sergey/openwebui-stack/scripts/stop.sh
-Icon=process-stop
+Name=Open WebUI - Stop
+Comment=Stop Open WebUI service
+Exec=systemctl --user stop openwebui
+Icon=application-exit
 Terminal=false
-Categories=Development;Network;
+Categories=Network;Application;
+
