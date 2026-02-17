@@ -3,7 +3,8 @@ Version=1.0
 Type=Application
 Name=Open WebUI - Start
 Comment=Start Open WebUI and open in browser
-Exec=bash -c 'systemctl --user start openwebui && sleep 5 && xdg-open http://localhost:3000'
+Exec=bash -c '$HOME/openwebui-stack/scripts/start-with-browser.sh'
 Icon=applications-internet
-Terminal=false
+Terminal=true
 Categories=Network;Application;
+

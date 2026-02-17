@@ -3,8 +3,8 @@ Version=1.0
 Type=Application
 Name=Open WebUI - Stop
 Comment=Stop Open WebUI service
-Exec=systemctl --user stop openwebui
+Exec=bash -c '$HOME/openwebui-stack/scripts/stop.sh'
 Icon=application-exit
-Terminal=false
+Terminal=true
 Categories=Network;Application;
 
