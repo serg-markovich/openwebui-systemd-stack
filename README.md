@@ -52,9 +52,11 @@ I wanted to run Open WebUI + Ollama on my laptop **without draining the battery*
 ## ⚡ Quick Start
 
 ```bash
-# Clone repository
+# Clone repository to your home directory (required for desktop shortcuts)
+cd ~
 git clone https://github.com/serg-markovich/openwebui-systemd-stack.git
 cd openwebui-systemd-stack
+
 
 # Configure Ollama (one-time setup)
 sudo mkdir -p /etc/systemd/system/ollama.service.d/
@@ -71,12 +73,19 @@ systemctl --user daemon-reload
 systemctl --user start openwebui
 ```
 
-**Open browser:** http://localhost:3000
-
 ### Desktop Launchers (Optional)
 
+To enable one-click start/stop from your application menu:
+
 ```bash
+# 1. Ensure scripts are executable (requires 'curl' to be installed)
+chmod +x scripts/*.sh
+
+# 2. Copy desktop entries
 cp desktop/*.desktop ~/.local/share/applications/
+
+# 3. Update the desktop database so your OS registers the new shortcuts
+update-desktop-database ~/.local/share/applications/
 ```
 
 **Full guide:** [Quick Start Documentation](docs/QUICK_START.md)
