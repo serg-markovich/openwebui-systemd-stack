@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate docker-compose syntax
+        run: docker compose config -q
+
+      - name: Check required files exist
+        run: |
+          missing=0
+          for f in Makefile CHANGELOG.md .env.example systemd/openwebui.service; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing: $f"
+              missing=1
+            else
+              echo "✅ Found: $f"
+            fi
+          done
+          exit $missing
+
+      - name: Check shell scripts syntax
+        run: |
+          find scripts/ -name "*.sh" | while read f; do
+            bash -n "$f" && echo "✅ $f" || echo "❌ $f"
+          done
+
+      - name: Lint shell scripts
+        run: |
+          sudo apt-get install -y shellcheck -q
+          find scripts/ -name "*.sh" -exec shellcheck {} \;
