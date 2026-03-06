@@ -7,6 +7,8 @@
 ![systemd](https://img.shields.io/badge/systemd-249+-green?logo=linux)
 ![Ubuntu](https://img.shields.io/badge/ubuntu-22.04+-orange?logo=ubuntu)
 ![Battery Optimized](https://img.shields.io/badge/battery-optimized-brightgreen)
+![CI](https://github.com/serg-markovich/openwebui-systemd-stack/actions/workflows/ci.yml/badge.svg)
+
 
 **Production-ready local AI with systemd service management, Docker bridge networking, and desktop integration.**
 
