@@ -183,9 +183,11 @@ docker compose config
 
 ### 3. Port 3000 already in use
 
+**Fix:** Change port in `.env`:
+
 ```bash
-sudo lsof -i :3000
-# Kill conflicting process or change port in docker-compose.yml
+WEBUI_PORT=8000
+Then: make restart
 ```
 
 ### 4. Docker volume permission issues
@@ -312,7 +314,7 @@ ollama pull codellama
 Should be:
 ```yaml
 environment:
-  - OLLAMA_BASE_URL=http://172.17.0.1:11434
+  - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://172.17.0.1:11434}
 ```
 
 ---

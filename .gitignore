@@ -15,5 +15,6 @@ Thumbs.db
 *.swo
 
 # Backup files
+backups/
 *.backup
 *.bak

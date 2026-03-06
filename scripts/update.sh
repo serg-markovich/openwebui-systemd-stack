@@ -12,7 +12,22 @@ systemctl --user stop openwebui || true
 
 echo "2️⃣ Pulling latest image..."
 cd "$PROJECT_ROOT"
-docker compose pull open-webui
+RETRIES=5
+SUCCESS=false
+for i in $(seq 1 $RETRIES); do
+    if docker compose pull open-webui; then
+        SUCCESS=true
+        break
+    fi
+    echo "⚠️  Attempt $i/$RETRIES failed, retrying in 10s..."
+    sleep 10
+done
+
+if [ "$SUCCESS" = false ]; then
+    echo "❌ Failed to pull image after $RETRIES attempts. Restarting with existing image..."
+    systemctl --user start openwebui
+    exit 1
+fi
 
 echo "3️⃣ Starting service..."
 systemctl --user start openwebui

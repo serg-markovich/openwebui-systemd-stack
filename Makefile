@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help install start stop restart status logs update
+.PHONY: help install start stop restart status logs update backup restore
 
 help:
 	@echo "Open WebUI systemd Stack"
@@ -14,6 +14,9 @@ help:
 	@echo "  status    Show service and container status"
 	@echo "  logs      Follow container logs (Ctrl+C to exit)"
 	@echo "  update    Pull latest image and restart"
+	@echo "  backup    Save chat history to backups/"
+	@echo "  restore   Restore from backup: make restore FILE=backups/file.tar.gz"
+
 
 install:
 	@echo "📦 Installing systemd service..."
@@ -48,3 +51,20 @@ logs:
 
 update:
 	bash scripts/update.sh
+
+backup:
+	@mkdir -p backups
+	docker run --rm \
+		-v openwebui-stack_open-webui:/data \
+		-v $(PWD)/backups:/backup \
+		alpine tar czf /backup/openwebui-$(shell date +%Y%m%d-%H%M).tar.gz /data
+	@echo "✅ Backup saved to backups/"
+
+restore:
+	@test -n "$(FILE)" || (echo "❌ Usage: make restore FILE=backups/openwebui-YYYYMMDD-HHMM.tar.gz" && exit 1)
+	docker run --rm \
+		-v openwebui-stack_open-webui:/data \
+		-v $(PWD)/backups:/backup \
+		alpine sh -c "cd / && tar xzf /backup/$(notdir $(FILE))"
+	@echo "✅ Restored from $(FILE)"
+

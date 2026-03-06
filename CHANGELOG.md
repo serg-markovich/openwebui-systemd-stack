@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.4.0] - 2026-03-06
+
+### Added
+- `make backup` / `make restore` — chat history backup to backups/
+- `.env.example` — documents `OLLAMA_BASE_URL` and `WEBUI_PORT`
+- Retry logic in `update.sh` — 5 attempts with 10s delay on network failure
+- IPv6 troubleshooting section in TROUBLESHOOTING.md
+
+### Changed
+- `docker-compose.yml` — port and Ollama URL now read from `.env` with fallback defaults
+- `docs/QUICK_START.md` — rewritten around `make` commands
+- `docs/INSTALLATION.md` — rewritten, simplified to 8 steps
+- `docs/UPDATING.md` — updated to use `make update`
+- `docs/ARCHITECTURE.md` — synced directory structure, updated image version
+
+### Fixed
+- `.PHONY` — added `backup` and `restore` targets
+- `.gitignore` — fixed `backups/` pattern (was `.backups/`)
+
+### Updated
+- Open WebUI `v0.8.5` → `v0.8.8`
+
+---
+
 ## [1.3.0] - 2026-03-06
 
 ### Added

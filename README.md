@@ -172,6 +172,11 @@ Full details → [Architecture Documentation](docs/ARCHITECTURE.md)
 - [x] Desktop launchers (XDG standards)
 - [x] Comprehensive documentation
 - [x] Battery-optimized manual control
+- [x] Makefile — unified entry point 
+- [x] GitHub Actions CI/CD pipeline
+- [x] Backup/restore for chat history
+
+
 
 ---
 

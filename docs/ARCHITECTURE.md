@@ -23,11 +23,6 @@
 
 This document explains the technical architecture, design decisions, and system integration patterns used in this project.
 
-
-**Open WebUI + Ollama systemd Stack**
-
-This document explains the technical architecture, design decisions, and system integration patterns used in this project.
-
 ---
 
 ## Table of Contents
@@ -48,52 +43,52 @@ This document explains the technical architecture, design decisions, and system 
 ### High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    User Space                           │
-│                                                          │
+┌────────────────────────────────────────────────────────┐
+│                    User Space                          │
+│                                                        │
 │  ┌──────────────┐        ┌─────────────────────┐       │
 │  │   Browser    │        │  Application Menu   │       │
 │  │ (localhost:  │        │  (Desktop Launcher) │       │
 │  │    3000)     │        │                     │       │
 │  └──────┬───────┘        └──────────┬──────────┘       │
-│         │                           │                   │
-│         │ HTTP                      │ XDG Desktop       │
-│         │                           │ Entry             │
-│         ▼                           ▼                   │
+│         │                           │                  │
+│         │ HTTP                      │ XDG Desktop      │
+│         │                           │ Entry            │
+│         ▼                           ▼                  │
 │  ┌─────────────────────────────────────────────┐       │
 │  │         systemd User Service                │       │
 │  │      (openwebui.service)                    │       │
-│  │                                              │       │
+│  │                                             │       │
 │  │  ExecStart: docker compose up -d            │       │
 │  │  ExecStop:  docker compose down             │       │
 │  └──────────────────┬──────────────────────────┘       │
-│                     │                                   │
-│                     │ Docker API                        │
-│                     ▼                                   │
+│                     │                                  │
+│                     │ Docker API                       │
+│                     ▼                                  │
 │  ┌─────────────────────────────────────────────┐       │
 │  │        Docker Engine (dockerd)              │       │
-│  │                                              │       │
+│  │                                             │  м    │
 │  │  ┌───────────────────────────────────────┐  │       │
 │  │  │   Container: open-webui               │  │       │
-│  │  │   Image: ghcr.io/open-webui/...      │  │       │
-│  │  │   Network: bridge (172.17.0.0/16)    │  │       │
-│  │  │   Port: 3000:8080                    │  │       │
-│  │  │   Volume: open-webui:/app/...        │  │       │
+│  │  │   Image: ghcr.io/open-webui/...       │  │       │
+│  │  │   Network: bridge (172.17.0.0/16)     │  │       │
+│  │  │   Port: 3000:8080                     │  │       │
+│  │  │   Volume: open-webui:/app/...         │  │       │
 │  │  └───────────────┬───────────────────────┘  │       │
 │  └──────────────────┼──────────────────────────┘       │
-│                     │                                   │
-│                     │ HTTP to 172.17.0.1:11434          │
-│                     │ (Docker bridge gateway)           │
-│                     ▼                                   │
+│                     │                                  │
+│                     │ HTTP to 172.17.0.1:11434         │
+│                     │ (Docker bridge gateway)          │
+│                     ▼                                  │
 │  ┌─────────────────────────────────────────────┐       │
 │  │        Ollama System Service                │       │
 │  │     (ollama.service - systemd)              │       │
-│  │                                              │       │
+│  │                                             │       │
 │  │  Listening: 0.0.0.0:11434                   │       │
 │  │  Models: /usr/share/ollama/.ollama/models   │       │
 │  └─────────────────────────────────────────────┘       │
-│                                                          │
-└─────────────────────────────────────────────────────────┘
+│                                                        │
+└────────────────────────────────────────────────────────┘
 
                     Host System (Ubuntu)
 ```
@@ -129,12 +124,12 @@ This document explains the technical architecture, design decisions, and system 
 ```yaml
 services:
   open-webui:
-    image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/open-webui/open-webui:v0.8.8  # pinned — update via: make update
     container_name: open-webui
     ports:
-      - "3000:8080"                          # Host:Container
+      - "${WEBUI_PORT:-3000}:8080"
     environment:
-      - OLLAMA_BASE_URL=http://172.17.0.1:11434
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://172.17.0.1:11434}
     volumes:
       - open-webui:/app/backend/data        # Named volume for persistence
     restart: "no"                            # Manual lifecycle control
@@ -272,33 +267,33 @@ Categories=Network;WebBrowser;
 ```
 ┌──────────────────────────────────────────────┐
 │              Host System                     │
-│                                               │
+│                                              │
 │  Interface: lo (127.0.0.1)                   │
 │  Interface: eth0 (192.168.x.x)               │
-│                                               │
+│                                              │
 │  ┌────────────────────────────────────────┐  │
 │  │     Docker Bridge Network              │  │
 │  │     Subnet: 172.17.0.0/16              │  │
-│  │                                         │  │
+│  │                                        │  │
 │  │  Gateway: 172.17.0.1 (docker0)         │  │
-│  │           ▲                             │  │
-│  │           │                             │  │
+│  │           ▲                            │  │
+│  │           │                            │  │
 │  │  Container IP: 172.17.0.2              │  │
 │  │  ┌─────────────────────────────────┐   │  │
 │  │  │  open-webui container           │   │  │
 │  │  │  Port 8080 → Host 3000          │   │  │
-│  │  │                                  │   │  │
+│  │  │                                 │   │  │
 │  │  │  OLLAMA_BASE_URL=               │   │  │
 │  │  │    http://172.17.0.1:11434      │   │  │
 │  │  └─────────────────────────────────┘   │  │
 │  └────────────────────────────────────────┘  │
-│                                               │
+│                                              │
 │  Host Service: Ollama                        │
 │  Listening: 0.0.0.0:11434                    │
 │  Accessible at:                              │
 │    - 127.0.0.1:11434 (localhost)             │
 │    - 172.17.0.1:11434 (Docker bridge)        │
-│                                               │
+│                                              │
 └──────────────────────────────────────────────┘
 ```
 
@@ -403,29 +398,37 @@ systemctl --user stop openwebui
 ### Directory Structure
 
 ```
-~/openwebui-stack/                    # Project root (Git repository)
-├── docker-compose.yml                # Container orchestration
-├── README.md                         # User documentation
-├── LICENSE                           # MIT License
-├── .gitignore                        # Git exclusions
+~/openwebui-stack/                   # Project root (Git repository)
+├── docker-compose.yml               # Container orchestration
+├── .env.example 
+├── Makefile
+├── README.md                        # User documentation
+├── LICENSE                          # MIT License
+├── CHANGELOG.md
+├── .gitignore                       # Git exclusions
 │
-├── systemd/                          # Reference systemd files
+├── systemd/                         # Reference systemd files
 │   └── openwebui.service            # Service definition template
 │
-├── desktop/                          # Reference desktop entries
+├── desktop/                         # Reference desktop entries
 │   ├── openwebui-start.desktop      # Start launcher
 │   ├── openwebui-stop.desktop       # Stop launcher
 │   └── openwebui-status.desktop     # Status launcher
 │
-├── scripts/                          # Helper scripts
+├── scripts/                         # Helper scripts
 │   ├── start-with-browser.sh        # Launch + open browser
 │   ├── stop.sh                      # Graceful shutdown
-│   └── status.sh                    # Status check
+│   │── status.sh                    # Status check
+│   └── update.sh                    # gitignored
+├── backups/                         
 │
-└── docs/                             # Documentation
-    ├── TROUBLESHOOTING.md           # Issue resolution
-    ├── ARCHITECTURE.md              # This file
-    └── screenshot.png               # UI preview
+└── docs/                            # Documentation
+    ├── ARCHITECTURE.md
+    ├── INSTALLATION.md
+    ├── QUICK_START.md
+    ├── UPDATING.md
+    ├── TROUBLESHOOTING.md
+    └── screenshot_1.png, _2.png, _3.png
 ```
 
 **System Integration Locations:**
@@ -790,6 +793,6 @@ Considered 8000, but that's often used for Python apps.
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** 2026-02-09  
-**Author:** DevOps Portfolio Project
+**Document Version:** 1.3
+**Last Updated:** 2026-03-06
+**Author:** Serg Markovych
