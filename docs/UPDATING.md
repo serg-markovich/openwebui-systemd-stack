@@ -14,12 +14,12 @@ This project uses a hybrid update strategy to balance stability with ease of mai
 
 ## Option 1: Quick Update via Script
 
-cd ~/openwebui-stack
-./scripts/update.sh
+```bash
+make update
+```
 
-The script will stop service, pull image, restart, and verify.
-
-After completion, open http://localhost:3000 and verify.
+The script stops the service, pulls the latest image with retry logic,
+restarts, and shows the current image version.
 
 ---
 
@@ -27,23 +27,31 @@ After completion, open http://localhost:3000 and verify.
 
 Step 1: Check changelog at https://github.com/open-webui/open-webui/releases
 
-Step 2: Edit docker-compose.yml and change image tag
+Step 2: Edit docker-compose.yml — change image tag:
+image: ghcr.io/open-webui/open-webui:vX.Y.Z
+
+Also update .env.example if you track OPENWEBUI_VERSION there.
 
 Step 3: Apply update
-cd ~/openwebui-stack
-systemctl --user stop openwebui
-docker compose pull open-webui
-systemctl --user start openwebui
+
+```bash
+make update
+```
 
 Step 4: Verify
-docker ps | grep open-webui
-systemctl --user status openwebui
-curl -I http://localhost:3000
 
-Step 5: Commit
+```bash
+make status
+curl -I http://localhost:3000
+```
+
+Step 5: Commit the version bump
+
+```bash
 git add docker-compose.yml CHANGELOG.md
-git commit -m "chore: update open-webui to vX.Y.Z"
+git commit -m "chore(deps): update open-webui to vX.Y.Z"
 git push
+```
 
 ---
 

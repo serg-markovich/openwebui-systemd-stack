@@ -162,7 +162,6 @@ Full details → [Architecture Documentation](docs/ARCHITECTURE.md)
 
 ### Planned
 - [ ] Prometheus monitoring for container metrics
-- [ ] GitHub Actions CI/CD pipeline
 - [ ] Ansible playbook for automated deployment
 - [ ] Multi-distribution support (Fedora, Arch)
 
