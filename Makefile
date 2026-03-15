@@ -25,9 +25,11 @@ install:
 	systemctl --user daemon-reload
 	@echo "🖥️  Installing desktop launchers..."
 	mkdir -p ~/.local/share/applications/
-	cp desktop/*.desktop ~/.local/share/applications/
+	for f in desktop/*.desktop.template; do \
+		sed "s|%%INSTALL_PATH%%|$(PWD)|g" "$$f" \
+			> ~/.local/share/applications/$$(basename $$f .template); \
+	done
 	update-desktop-database ~/.local/share/applications/ 2>/dev/null || true
-	@echo "✅ Done. Run 'make start' to launch."
 
 start:
 	systemctl --user start openwebui
