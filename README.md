@@ -1,6 +1,4 @@
-=# Open WebUI + Ollama systemd Stack
-
-<div align="center">
+# Open WebUI + Ollama systemd Stack
 
 ![License](https://img.shields.io/github/license/serg-markovich/openwebui-systemd-stack)
 ![Docker](https://img.shields.io/badge/docker-24.0+-blue?logo=docker)
@@ -9,56 +7,41 @@
 ![Battery Optimized](https://img.shields.io/badge/battery-optimized-brightgreen)
 ![CI](https://github.com/serg-markovich/openwebui-systemd-stack/actions/workflows/ci.yml/badge.svg)
 
-
-**Production-ready local AI with systemd service management, Docker bridge networking, and desktop integration.**
+Production-ready local AI stack with systemd service management, Docker bridge networking, and desktop integration.
 
 [Quick Start](docs/QUICK_START.md) • [Installation](docs/INSTALLATION.md) • [Architecture](docs/ARCHITECTURE.md) • [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-</div>
-
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <div align="center">
-
-### Open WebUI in browser (chat view)
-<img src="docs/screenshot_1.png" alt="Desktop Launcher" width="600"/>
-
-### Model selection and prompt input
-<img src="docs/screenshot_2.png" alt="Chat Interface" width="600"/>
-
-### Open WebUI launchers in application menu
-<img src="docs/screenshot_3.png" alt="Service Status" width="600"/>
-
+<img src="docs/screenshot_1.png" alt="Open WebUI chat view" width="600"/>
+<img src="docs/screenshot_2.png" alt="Model selection" width="600"/>
+<img src="docs/screenshot_3.png" alt="Desktop launchers" width="600"/>
 </div>
 
 ---
 
-## 🎯 Why This Project?
+## Why This Project?
 
-I wanted to run Open WebUI + Ollama on my laptop **without draining the battery**. Most guides just say "docker run" and leave you with containers running 24/7.
+Most guides say "docker run" and leave you with containers running 24/7. I wanted to run Open WebUI + Ollama on a laptop **without draining the battery** — with proper service management, not a hack.
 
 **Key features:**
-- 🔋 **Battery optimized** - Manual control saves ~25% daily battery
-- ⚙️ **systemd integration** - Proper service management, no hacks
-- 🐳 **Docker bridge networking** - Clean isolation, production-ready
-- 🖥️ **Desktop launchers** - One-click start/stop from application menu
-- 📚 **Comprehensive docs** - Architecture decisions, troubleshooting guide
-- 🔒 **GDPR compliant** - All data processed locally, no external APIs
-
-**This is what I use daily on my HP EliteBook 845 G8.**
+- **Battery optimized** — manual control saves ~25% daily battery
+- **systemd integration** — proper lifecycle management, no background bloat
+- **Docker bridge networking** — clean isolation, production-ready
+- **Desktop launchers** — one-click start/stop from application menu
+- **GDPR compliant** — all data processed locally, no external APIs
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ```bash
-# Clone repository to your home directory (required for desktop shortcuts)
 cd ~
 git clone https://github.com/serg-markovich/openwebui-systemd-stack.git
 cd openwebui-systemd-stack
-
 
 # Configure Ollama (one-time setup)
 sudo mkdir -p /etc/systemd/system/ollama.service.d/
@@ -71,94 +54,70 @@ mkdir -p ~/.config/systemd/user/
 cp systemd/openwebui.service ~/.config/systemd/user/
 systemctl --user daemon-reload
 
-# Start service
+# Start
 systemctl --user start openwebui
 ```
 
 ### Desktop Launchers (Optional)
 
-To enable one-click start/stop from your application menu:
-
 ```bash
-# 1. Ensure scripts are executable (requires 'curl' to be installed)
 chmod +x scripts/*.sh
-
-# 2. Copy desktop entries
 cp desktop/*.desktop ~/.local/share/applications/
-
-# 3. Update the desktop database so your OS registers the new shortcuts
 update-desktop-database ~/.local/share/applications/
 ```
 
-**Full guide:** [Quick Start Documentation](docs/QUICK_START.md)
+Full guide: [Quick Start Documentation](docs/QUICK_START.md)
 
 ---
 
-## 📖 Documentation
+## Documentation
 
-- **[Quick Start Guide](docs/QUICK_START.md)** - Get running in 5 minutes
-- **[Installation Guide](docs/INSTALLATION.md)** - Detailed step-by-step setup
-- **[Architecture](docs/ARCHITECTURE.md)** - Design decisions and trade-offs
-- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
-- **[Changelog](CHANGELOG.md)** - Version history
+- [Quick Start Guide](docs/QUICK_START.md) — get running in 5 minutes
+- [Installation Guide](docs/INSTALLATION.md) — detailed step-by-step setup
+- [Architecture](docs/ARCHITECTURE.md) — design decisions and trade-offs
+- [Troubleshooting](docs/TROUBLESHOOTING.md) — common issues and solutions
+- [Changelog](CHANGELOG.md) — version history
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| **Container Runtime** | Docker 24.0+ | Isolation, reproducibility |
-| **Service Manager** | systemd 249+ | Lifecycle management |
-| **Orchestration** | docker-compose v2 | Service definition |
-| **Web UI** | Open WebUI | Chat interface |
-| **LLM Runtime** | Ollama | Model serving |
-| **Desktop Integration** | XDG Desktop Entry | GUI launchers |
+| Container Runtime | Docker 24.0+ | Isolation, reproducibility |
+| Service Manager | systemd 249+ | Lifecycle management |
+| Orchestration | docker-compose v2 | Service definition |
+| Web UI | Open WebUI | Chat interface |
+| LLM Runtime | Ollama | Model serving |
+| Desktop Integration | XDG Desktop Entry | GUI launchers |
 
 ---
 
-## 💻 My Setup
+## My Setup
 
-**Hardware:** HP EliteBook 845 G8  
-**OS:** Ubuntu 24.04 LTS  
-**Use case:** Daily driver for development + local AI experiments
-
-### Models I Use
+**Hardware:** HP EliteBook 845 G8, Ubuntu 24.04 LTS
 
 | Model | Size | Purpose |
 |-------|------|---------|
-| `mistral` | ~4.1 GB | Universal - general tasks + coding |
-| `qwen3:14b` | ~9 GB | Heavy lifting - complex reasoning |
-| `gemma3:3b` | ~2 GB | Quick responses - simple questions |
-| `codellama:7b` | ~3.8 GB | Code-specific (refactoring, debugging) |
-
-**Model selection strategy:**
-- Start with `gemma3:3b` for quick questions (saves battery)
-- Switch to `mistral` for coding + general work
-- Use `qwen3:14b` when quality matters most
-- `codellama:7b` for dedicated code review
+| `mistral` | ~4.1 GB | General tasks, coding |
+| `qwen3:14b` | ~9 GB | Complex reasoning |
+| `gemma3:3b` | ~2 GB | Quick responses, saves battery |
+| `codellama:7b` | ~3.8 GB | Code review, refactoring |
 
 ---
 
-## 🎓 What I Learned
+## What I Learned
 
-**Debugging journey:**
-- Spent 2 hours figuring out `172.17.0.1` gateway IP for Docker bridge networking
-- Learned `OLLAMA_HOST=0.0.0.0` is critical (default `127.0.0.1` doesn't work from containers)
-- Discovered `Type=oneshot` + `RemainAfterExit=yes` pattern for docker compose services
-- Measured 25% daily battery savings with manual control vs auto-restart
+- `172.17.0.1` is the Docker bridge gateway — not obvious until you spend 2 hours debugging
+- `OLLAMA_HOST=0.0.0.0` is required — default `127.0.0.1` doesn't work from inside containers
+- `Type=oneshot` + `RemainAfterExit=yes` is the correct systemd pattern for docker compose services
+- Manual service control vs auto-restart: measured ~25% daily battery savings
 
-**Key decisions:**
-- Bridge networking over host mode (better isolation)
-- User service over system service (no sudo required)
-- Manual control over auto-start (battery optimization)
-- Named volume over bind mount (easier backup)
-
-Full details → [Architecture Documentation](docs/ARCHITECTURE.md)
+Key decisions and reasoning: [Architecture Documentation](docs/ARCHITECTURE.md)
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 ### Planned
 - [ ] Prometheus monitoring for container metrics
@@ -169,42 +128,38 @@ Full details → [Architecture Documentation](docs/ARCHITECTURE.md)
 - [x] systemd user service integration
 - [x] Docker bridge networking setup
 - [x] Desktop launchers (XDG standards)
-- [x] Comprehensive documentation
 - [x] Battery-optimized manual control
-- [x] Makefile — unified entry point 
+- [x] Makefile — unified entry point
 - [x] GitHub Actions CI/CD pipeline
 - [x] Backup/restore for chat history
-
-
-
----
-
-## 🤝 Contributing
-
-Issues and PRs welcome! This is a learning project - feedback appreciated.
-
-**Ways to contribute:**
-- ⭐ Star the repo
-- 🐛 Report bugs you encounter
-- 📝 Improve documentation
-- 💡 Suggest features
+- [x] Comprehensive documentation
 
 ---
 
-## 📜 License
+## Contributing
 
-MIT License - see [LICENSE](LICENSE)
+Issues and PRs welcome.
 
----
-
-## 🔗 Links
-
-- **Open WebUI:** https://github.com/open-webui/open-webui
-- **Ollama:** https://ollama.com
-- **systemd:** https://systemd.io
+- Star the repo if it's useful
+- Report bugs you encounter
+- Improve documentation
+- Suggest features
 
 ---
 
-**Built with** 🐳 Docker • ⚙️ systemd • 🐧 Linux • 🤖 Ollama
+## Eigenstack
 
-**Building in public, learning in public** 🚀
+This project is built around the [eigenstack](https://github.com/serg-markovich/eigenstack)
+philosophy — privacy-first, local-first infrastructure where every service
+runs on your own hardware, no cloud dependencies, no vendor lock-in.
+
+**Related projects:**
+- [eigenstack](https://github.com/serg-markovich/eigenstack) — architecture overview
+- [local-whisper-obsidian](https://github.com/serg-markovich/local-whisper-obsidian) — local voice transcription pipeline
+- [whisper-ollama-enricher](https://github.com/serg-markovich/whisper-ollama-enricher) — AI enrichment for voice notes
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE)
