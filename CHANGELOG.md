@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.5.0] - 2026-03-15
+
+### Changed
+- Desktop launchers now generated from templates at `make install` time —
+  project works regardless of where it is cloned or moved
+- `make install` substitutes real project path via `sed` instead of relying
+  on hardcoded `$HOME/openwebui-stack`
+
+### Removed
+- Hardcoded `desktop/*.desktop` files removed from repository
+
+### Added
+- `desktop/*.desktop.template` — portable launcher templates with
+  `%%INSTALL_PATH%%` placeholder
+- `.gitignore` — excludes generated `desktop/*.desktop` files,
+  tracks only templates
+
+
 ## [1.4.0] - 2026-03-06
 
 ### Added
