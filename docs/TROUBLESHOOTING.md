@@ -16,17 +16,17 @@ You moved (not copied) configuration files from system locations (`~/.config/sys
 
 **Solution:**
 
+# Reinstall from project root (automatically updates paths)
 ```bash
-# Restore systemd service
-cp ~/openwebui-stack/systemd/openwebui.service ~/.config/systemd/user/
-systemctl --user daemon-reload
+cd ~/FOUNDATION/projects/privacy/openwebui-stack  # your actual path
+make install
 
-# Restore desktop launchers
-cp ~/openwebui-stack/desktop/*.desktop ~/.local/share/applications/
+# Reload systemd and desktop database
+systemctl --user daemon-reload
 update-desktop-database ~/.local/share/applications/
 
 # Verify scripts are executable
-chmod +x ~/openwebui-stack/scripts/*.sh
+chmod +x scripts/*.sh
 ```
 
 **Prevention:**

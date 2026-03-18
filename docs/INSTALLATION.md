@@ -103,10 +103,9 @@ make install
 ```
 
 `make install` does the following:
-- Copies `systemd/openwebui.service` → `~/.config/systemd/user/`
-- Copies `desktop/*.desktop` → `~/.local/share/applications/`
-- Runs `systemctl --user daemon-reload`
-- Registers desktop launchers
+- Generates `~/.config/systemd/user/openwebui.service` from `systemd/openwebui.service.template` with `%%INSTALL_PATH%%` substitution
+- Generates `~/.local/share/applications/*.desktop` from `desktop/*.desktop.template` with path substitution
+- Runs `systemctl --user daemon-reload` and `update-desktop-database`
 
 Optional — enable auto-start on login:
 ```bash

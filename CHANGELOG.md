@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.6.0] - 2026-03-19
+
+### Changed
+- systemd service now generated from `systemd/openwebui.service.template` at `make install` time
+- `Makefile` uses `sed` to substitute `%%INSTALL_PATH%%` for portable installation
+- Project can be cloned/moved to any directory without manual path edits
+
+### Added
+- `systemd/openwebui.service.template` — portable service definition with `%%INSTALL_PATH%%` placeholder
+- `.gitignore` entry for generated `~/.config/systemd/user/openwebui.service`
+
+### Fixed
+- Desktop launcher `Exec=` syntax: `bash -c 'script'` → `bash script` for reliable execution
+- Duplicate code block in `install` target of Makefile
+
+### Migration Guide
+If you installed before v1.6.0:
+```bash
+# 1. Pull latest changes
+git pull
+
+# 2. Reinstall from new location (if moved)
+cd /new/path/openwebui-stack
+make install
+
+# 3. Reload systemd
+systemctl --user daemon-reload
+```
+
 ## [1.5.0] - 2026-03-15
 
 ### Changed

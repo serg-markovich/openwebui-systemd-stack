@@ -49,10 +49,9 @@ echo -e '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0:11434"' | \
   sudo tee /etc/systemd/system/ollama.service.d/override.conf
 sudo systemctl daemon-reload && sudo systemctl restart ollama
 
-# Setup systemd service
-mkdir -p ~/.config/systemd/user/
-cp systemd/openwebui.service ~/.config/systemd/user/
-systemctl --user daemon-reload
+# Install systemd service and desktop launchers (portable)
+make install
+# This substitutes %%INSTALL_PATH%% with your actual project path
 
 # Start
 systemctl --user start openwebui
@@ -61,9 +60,8 @@ systemctl --user start openwebui
 ### Desktop Launchers (Optional)
 
 ```bash
-chmod +x scripts/*.sh
-cp desktop/*.desktop ~/.local/share/applications/
-update-desktop-database ~/.local/share/applications/
+# Desktop launchers are installed automatically via:
+make install
 ```
 
 Full guide: [Quick Start Documentation](docs/QUICK_START.md)

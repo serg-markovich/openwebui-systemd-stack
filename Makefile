@@ -21,7 +21,8 @@ help:
 install:
 	@echo "📦 Installing systemd service..."
 	mkdir -p ~/.config/systemd/user/
-	cp systemd/openwebui.service ~/.config/systemd/user/openwebui.service
+	sed "s|%%INSTALL_PATH%%|$(PWD)|g" systemd/openwebui.service.template \
+		> ~/.config/systemd/user/openwebui.service
 	systemctl --user daemon-reload
 	@echo "🖥️  Installing desktop launchers..."
 	mkdir -p ~/.local/share/applications/

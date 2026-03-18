@@ -408,12 +408,12 @@ systemctl --user stop openwebui
 ├── .gitignore                       # Git exclusions
 │
 ├── systemd/                         # Reference systemd files
-│   └── openwebui.service            # Service definition template
+│   └── openwebui.service.template   # Service definition template (with %%INSTALL_PATH%%)
 │
-├── desktop/                         # Reference desktop entries
-│   ├── openwebui-start.desktop      # Start launcher
-│   ├── openwebui-stop.desktop       # Stop launcher
-│   └── openwebui-status.desktop     # Status launcher
+├── desktop/                         
+│   ├── openwebui-start.desktop.template
+│   ├── openwebui-stop.desktop.template  
+│   └── openwebui-status.desktop.template
 │
 ├── scripts/                         # Helper scripts
 │   ├── start-with-browser.sh        # Launch + open browser
@@ -485,6 +485,19 @@ systemctl --user stop openwebui
 - Desktop environments may not resolve symlinks
 - Explicit copies ensure compatibility
 - Clear separation of concerns
+
+---
+
+### Template Substitution at Install Time
+
+Starting with v1.6.0, both systemd service and desktop launchers use template files with `%%INSTALL_PATH%%` placeholder:
+
+| Template | Generated To | Substitution |
+|----------|-------------|--------------|
+| `systemd/openwebui.service.template` | `~/.config/systemd/user/openwebui.service` | `%%INSTALL_PATH%%` → `$(pwd)` |
+| `desktop/*.desktop.template` | `~/.local/share/applications/*.desktop` | `%%INSTALL_PATH%%` → `$(pwd)` |
+
+This enables true portability: the project works regardless of where it's cloned or moved.
 
 ---
 
