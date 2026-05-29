@@ -19,7 +19,7 @@ jobs:
       - name: Check required files exist
         run: |
           missing=0
-          for f in Makefile CHANGELOG.md .env.example systemd/openwebui.service; do
+          for f in Makefile CHANGELOG.md .env.example systemd/openwebui.service.template; do
             if [ ! -f "$f" ]; then
               echo "❌ Missing: $f"
               missing=1
