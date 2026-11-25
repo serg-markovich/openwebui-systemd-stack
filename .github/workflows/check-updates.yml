@@ -31,7 +31,7 @@ jobs:
 
       - name: Create Issue if update available
         if: steps.latest.outputs.tag != steps.current.outputs.tag && steps.current.outputs.tag != 'main'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { owner, repo } = context.repo;
