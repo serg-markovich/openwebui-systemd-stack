@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.7.0] - 2026-11-25
+
+### Changed
+- Open WebUI image `v0.9.5` (commit `414eca5`); `.env.example` `OPENWEBUI_VERSION` aligned to `v0.9.5`
+- Documentation synced with v1.6.0 templates (image tag, systemd unit, launcher format, paths)
+
+### Added
+- `make lint` — local parity with CI (`bash -n`, `shellcheck`, `docker compose config -q`)
+- `make doctor` — read-only environment diagnostics
+- `.editorconfig`, Dependabot config, `docs/SECURITY.md`
+
 ## [1.6.0] - 2026-03-19
 
 ### Changed

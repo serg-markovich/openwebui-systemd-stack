@@ -1,163 +1,74 @@
 # Open WebUI + Ollama systemd Stack
 
-![License](https://img.shields.io/github/license/serg-markovich/openwebui-systemd-stack)
-![Docker](https://img.shields.io/badge/docker-24.0+-blue?logo=docker)
-![systemd](https://img.shields.io/badge/systemd-249+-green?logo=linux)
-![Ubuntu](https://img.shields.io/badge/ubuntu-22.04+-orange?logo=ubuntu)
-![Battery Optimized](https://img.shields.io/badge/battery-optimized-brightgreen)
-![CI](https://github.com/serg-markovich/openwebui-systemd-stack/actions/workflows/ci.yml/badge.svg)
+**Status:** `MAINTENANCE` — working local stack at v1.6.0 (last commit 2026-05-29); low activity, docs synced 2026-11-25.
 
-Production-ready local AI stack with systemd service management, Docker bridge networking, and desktop integration.
+Local AI stack: Open WebUI in Docker, Ollama on the host, managed by a systemd user service with XDG desktop launchers. Built for laptops — start when needed, no always-on container.
 
-[Quick Start](docs/QUICK_START.md) • [Installation](docs/INSTALLATION.md) • [Architecture](docs/ARCHITECTURE.md) • [Troubleshooting](docs/TROUBLESHOOTING.md)
-
----
-
-## Screenshots
-
-<div align="center">
-<img src="docs/screenshot_1.png" alt="Open WebUI chat view" width="600"/>
-<img src="docs/screenshot_2.png" alt="Model selection" width="600"/>
-<img src="docs/screenshot_3.png" alt="Desktop launchers" width="600"/>
-</div>
-
----
-
-## Why This Project?
-
-Most guides say "docker run" and leave you with containers running 24/7. I wanted to run Open WebUI + Ollama on a laptop **without draining the battery** — with proper service management, not a hack.
-
-**Key features:**
-- **Battery optimized** — manual control saves ~25% daily battery
-- **systemd integration** — proper lifecycle management, no background bloat
-- **Docker bridge networking** — clean isolation, production-ready
-- **Desktop launchers** — one-click start/stop from application menu
-- **GDPR compliant** — all data processed locally, no external APIs
-
----
+## Overview
+- **Battery-first lifecycle:** `restart: "no"` + manual start/stop; measured ~25% daily battery saving on the author's EliteBook.
+- **systemd user service:** `Type=oneshot` + `RemainAfterExit=yes` wraps `docker compose up -d` / `down`; no root for daily use.
+- **Docker bridge networking:** container reaches host Ollama via `172.17.0.1:11434`; requires `OLLAMA_HOST=0.0.0.0`.
+- **Portable install:** `make install` renders `systemd/` + `desktop/` templates, so the repo works from any path.
+- **Local-only data:** chats in a named Docker volume; no external APIs or telemetry.
 
 ## Quick Start
+Prereqs: Docker 24.0+ with Compose v2, systemd 249+, Ollama installed, user in the `docker` group.
 
 ```bash
-cd ~
-git clone https://github.com/serg-markovich/openwebui-systemd-stack.git
+git clone git@github.com:serg-markovich/openwebui-systemd-stack.git
 cd openwebui-systemd-stack
+cp .env.example .env    # WEBUI_PORT=3000, OLLAMA_BASE_URL=http://172.17.0.1:11434
 
-# Configure Ollama (one-time setup)
+# One-time: let Docker bridge reach host Ollama
 sudo mkdir -p /etc/systemd/system/ollama.service.d/
 echo -e '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0:11434"' | \
   sudo tee /etc/systemd/system/ollama.service.d/override.conf
 sudo systemctl daemon-reload && sudo systemctl restart ollama
 
-# Install systemd service and desktop launchers (portable)
-make install
-# This substitutes %%INSTALL_PATH%% with your actual project path
-
-# Start
-systemctl --user start openwebui
+make install   # install user service + desktop launchers
+make start     # UI at http://localhost:3000
 ```
 
-### Desktop Launchers (Optional)
-
-```bash
-# Desktop launchers are installed automatically via:
-make install
-```
-
-Full guide: [Quick Start Documentation](docs/QUICK_START.md)
-
----
-
-## Documentation
-
-- [Quick Start Guide](docs/QUICK_START.md) — get running in 5 minutes
-- [Installation Guide](docs/INSTALLATION.md) — detailed step-by-step setup
-- [Architecture](docs/ARCHITECTURE.md) — design decisions and trade-offs
-- [Troubleshooting](docs/TROUBLESHOOTING.md) — common issues and solutions
-- [Changelog](CHANGELOG.md) — version history
-
----
+Daily: `make stop | restart | status | logs | update | backup`; diagnostics: `make doctor`; lint: `make lint`.
+Restore: `make restore FILE=backups/openwebui-YYYYMMDD-HHMM.tar.gz`.
+Full guides: [Quick Start](docs/QUICK_START.md) • [Installation](docs/INSTALLATION.md) • [Architecture](docs/ARCHITECTURE.md) • [Updating](docs/UPDATING.md) • [Troubleshooting](docs/TROUBLESHOOTING.md) • [Security](docs/SECURITY.md).
 
 ## Tech Stack
+| Component | Technology |
+|---|---|
+| Container | Docker 24.0+, Compose v2, image `ghcr.io/open-webui/open-webui:v0.9.5` |
+| Service manager | systemd 249+ (user unit) |
+| LLM runtime | Ollama (host service, `0.0.0.0:11434`) |
+| Desktop | XDG desktop entries |
+| Scripting | Bash 5.x + Make |
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| Container Runtime | Docker 24.0+ | Isolation, reproducibility |
-| Service Manager | systemd 249+ | Lifecycle management |
-| Orchestration | docker-compose v2 | Service definition |
-| Web UI | Open WebUI | Chat interface |
-| LLM Runtime | Ollama | Model serving |
-| Desktop Integration | XDG Desktop Entry | GUI launchers |
+Tested on: HP EliteBook 845 G8, Ubuntu 24.04 LTS. Models used: `gemma3:3b`, `mistral`, `qwen3:14b`, `codellama:7b`.
 
----
+## Status & Roadmap
 
-## My Setup
+**Working**
+- `make install/start/stop/restart/status/logs` and desktop start/stop/status launchers.
+- Bridge connectivity to Ollama; healthcheck; chat persistence in named volume.
+- `make backup` / `make restore`; CI (compose validation, `bash -n`, shellcheck); weekly upstream release check.
 
-**Hardware:** HP EliteBook 845 G8, Ubuntu 24.04 LTS
+**Broken / Incomplete**
+- `OPENWEBUI_VERSION` in `.env.example` is unused — image tag is hardcoded in `docker-compose.yml`, so `make update` only re-pulls the pinned tag.
+- Backup/restore hardcode volume `openwebui-stack_open-webui` — breaks if the clone directory is renamed.
+- `WEBUI_PORT` is ignored by launcher/Makefile messages (hardcoded `:3000`).
+- No tests beyond `make lint`; no monitoring/Ansible/Fedora/Arch support.
 
-| Model | Size | Purpose |
-|-------|------|---------|
-| `mistral` | ~4.1 GB | General tasks, coding |
-| `qwen3:14b` | ~9 GB | Complex reasoning |
-| `gemma3:3b` | ~2 GB | Quick responses, saves battery |
-| `codellama:7b` | ~3.8 GB | Code review, refactoring |
+**Next Steps**
+1. Make the image tag env-driven (`image: ...:${OPENWEBUI_VERSION:-v0.9.5}`) and sync `.env.example` + `CHANGELOG.md`.
+2. Derive the volume name (`docker compose config --volumes` / project name) instead of hardcoding it; honor `WEBUI_PORT` in scripts.
+3. Add a CI smoke test against the container health endpoint; let Dependabot handle image/action bumps.
 
----
-
-## What I Learned
-
-- `172.17.0.1` is the Docker bridge gateway — not obvious until you spend 2 hours debugging
-- `OLLAMA_HOST=0.0.0.0` is required — default `127.0.0.1` doesn't work from inside containers
-- `Type=oneshot` + `RemainAfterExit=yes` is the correct systemd pattern for docker compose services
-- Manual service control vs auto-restart: measured ~25% daily battery savings
-
-Key decisions and reasoning: [Architecture Documentation](docs/ARCHITECTURE.md)
-
----
-
-## Roadmap
-
-### Planned
-- [ ] Prometheus monitoring for container metrics
-- [ ] Ansible playbook for automated deployment
-- [ ] Multi-distribution support (Fedora, Arch)
-
-### Completed
-- [x] systemd user service integration
-- [x] Docker bridge networking setup
-- [x] Desktop launchers (XDG standards)
-- [x] Battery-optimized manual control
-- [x] Makefile — unified entry point
-- [x] GitHub Actions CI/CD pipeline
-- [x] Backup/restore for chat history
-- [x] Comprehensive documentation
-
----
+## Screenshots
+[Chat](docs/screenshot_1.png) • [Model selection](docs/screenshot_2.png) • [Desktop launchers](docs/screenshot_3.png)
 
 ## Contributing
+Issues and PRs welcome: bug reports, docs fixes, distro support. Run `make` for the target list.
 
-Issues and PRs welcome.
-
-- Star the repo if it's useful
-- Report bugs you encounter
-- Improve documentation
-- Suggest features
-
----
-
-## Eigenstack
-
-This project is built around the [eigenstack](https://github.com/serg-markovich/eigenstack)
-philosophy — privacy-first, local-first infrastructure where every service
-runs on your own hardware, no cloud dependencies, no vendor lock-in.
-
-**Related projects:**
-- [eigenstack](https://github.com/serg-markovich/eigenstack) — architecture overview
-- [local-whisper-obsidian](https://github.com/serg-markovich/local-whisper-obsidian) — local voice transcription pipeline
-- [whisper-ollama-enricher](https://github.com/serg-markovich/whisper-ollama-enricher) — AI enrichment for voice notes
-
----
+Part of the [eigenstack](https://github.com/serg-markovich/eigenstack) local-first philosophy: no cloud dependencies, no vendor lock-in.
 
 ## License
-
-MIT — see [LICENSE](LICENSE)
+MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Sergey Markovych.

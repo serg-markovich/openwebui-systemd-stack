@@ -18,7 +18,7 @@ You moved (not copied) configuration files from system locations (`~/.config/sys
 
 # Reinstall from project root (automatically updates paths)
 ```bash
-cd ~/FOUNDATION/projects/privacy/openwebui-stack  # your actual path
+cd ~/openwebui-systemd-stack  # or your actual clone path
 make install
 
 # Reload systemd and desktop database
@@ -160,7 +160,7 @@ journalctl --user -u openwebui -n 50 --no-pager
 sudo systemctl status docker
 
 # Test docker-compose manually
-cd ~/openwebui-stack
+cd ~/openwebui-systemd-stack
 docker compose up
 ```
 
@@ -176,7 +176,7 @@ sudo systemctl enable docker
 ### 2. docker-compose.yml syntax error
 
 ```bash
-cd ~/openwebui-stack
+cd ~/openwebui-systemd-stack
 docker compose config
 # Should output valid configuration
 ```
@@ -355,28 +355,28 @@ docker logs open-webui --tail 100
 ls -la ~/.local/share/applications/openwebui*.desktop
 
 # Check file permissions
-ls -la ~/openwebui-stack/scripts/*.sh
+ls -la ~/openwebui-systemd-stack/scripts/*.sh
 ```
 
 **Solutions:**
 
 ### 1. Desktop files not installed
+`desktop/` holds templates, not ready-to-use files. Render and install them:
 ```bash
-cp ~/openwebui-stack/desktop/*.desktop ~/.local/share/applications/
+make install
 update-desktop-database ~/.local/share/applications/
 ```
 
 ### 2. Scripts not executable
 ```bash
-chmod +x ~/openwebui-stack/scripts/*.sh
+chmod +x ~/openwebui-systemd-stack/scripts/*.sh
 ```
 
 ### 3. Wrong paths in .desktop files
-Edit `~/.local/share/applications/openwebui-start.desktop`:
-```ini
-Exec=/home/YOUR_USERNAME/openwebui-stack/scripts/start-with-browser.sh
+Launchers are generated with `%%INSTALL_PATH%%` substituted at install time. If the repo moved, re-run:
+```bash
+make install
 ```
-Replace `YOUR_USERNAME` with actual username.
 
 ### 4. Desktop database not updated
 ```bash
@@ -435,9 +435,9 @@ xdg-settings set default-web-browser firefox.desktop
 ```
 
 ### 3. Service starts too slow
-Increase wait time in `start-with-browser.sh`:
+Increase `MAX_RETRIES` in `scripts/start-with-browser.sh` (currently `30`, ~60 s):
 ```bash
-for i in {1..60}; do  # Increase from 30 to 60
+MAX_RETRIES=60
 ```
 
 ---
@@ -454,7 +454,7 @@ After `docker compose pull`, service fails to start.
 systemctl --user stop openwebui
 
 # Pull updates
-cd ~/openwebui-stack
+cd ~/openwebui-systemd-stack
 docker compose pull
 
 # Remove old container
@@ -516,7 +516,7 @@ Before asking for help, verify:
 - [ ] Ollama listening on 0.0.0.0: Check override.conf
 - [ ] Check systemd logs: `journalctl --user -u openwebui -n 50`
 - [ ] Check container logs: `docker logs open-webui`
-- [ ] Scripts are executable: `ls -la ~/openwebui-stack/scripts/`
+- [ ] Scripts are executable: `ls -la ~/openwebui-systemd-stack/scripts/`
 - [ ] Desktop files installed: `ls ~/.local/share/applications/openwebui*.desktop`
 
 ---
@@ -545,7 +545,7 @@ systemctl --version >> system-info.txt
    - Output of debugging checklist
 
 3. **Check existing issues:**
-   - [GitHub Issues](https://github.com/YOUR_USERNAME/openwebui-systemd-stack/issues)
+   - [GitHub Issues](https://github.com/serg-markovich/openwebui-systemd-stack/issues)
    - [Open WebUI Docs](https://docs.openwebui.com)
    - [Ollama Troubleshooting](https://github.com/ollama/ollama/blob/main/docs/troubleshooting.md)
 
@@ -638,9 +638,9 @@ systemctl --user start openwebui
 ```bash
 # Source profile before running scripts
 source ~/.profile
-~/openwebui-stack/scripts/start-with-browser.sh
+~/openwebui-systemd-stack/scripts/start-with-browser.sh
 ```
 
 ---
 
-**Still having issues?** Open a [GitHub issue](https://github.com/YOUR_USERNAME/openwebui-systemd-stack/issues) with detailed logs and system information.
+**Still having issues?** Open a [GitHub issue](https://github.com/serg-markovich/openwebui-systemd-stack/issues) with detailed logs and system information.

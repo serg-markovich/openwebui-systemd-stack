@@ -41,7 +41,7 @@ make start
 ## What Just Happened?
 
 1. **Ollama configured** — accepts connections from Docker bridge (172.17.0.1)
-2. **Service installed** — `make install` copied systemd service and desktop launchers
+2. **Service installed** — `make install` rendered the systemd service and desktop launchers
 3. **Container started** — `make start` launched Open WebUI via Docker Compose
 4. **Ready** — web interface at http://localhost:3000
 

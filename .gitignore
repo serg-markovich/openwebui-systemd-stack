@@ -19,5 +19,4 @@ backups/
 *.backup
 *.bak
 desktop/*.desktop
-desktop/*.desktop
 !desktop/*.desktop.template
